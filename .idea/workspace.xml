@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8f9ac566-644d-49ab-a624-21fb8c927a1b" name="Default" comment="" />
+    <list default="true" id="8f9ac566-644d-49ab-a624-21fb8c927a1b" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -182,16 +184,6 @@
             <path>
               <item name="dissertation" type="b2602c69:ProjectViewProjectNode" />
               <item name="dissertation" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dissertation" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dissertation" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dissertation" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dissertation" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dissertation" type="b2602c69:ProjectViewProjectNode" />
