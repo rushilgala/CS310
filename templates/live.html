@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="Footlytic">
+<head>
+    <meta charset="UTF-8">
+    <title>Footlytic - Live!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='grayscale.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <style>#fixtures{margin-left: auto;margin-right: auto;}</style>
+    <script>
+        function parseTeamName(team) {
+            switch (team) {
+                case 'Arsenal':
+                    return 'Arsenal';
+                case 'Man Utd':
+                    return 'ManUtd';
+                case 'Watford':
+                    return 'Watford';
+                case 'Everton':
+                    return 'Everton';
+                case 'Newcastle':
+                    return 'Newcastle';
+                case 'Stoke City':
+                    return 'Stoke';
+                case 'Arsenal':
+                    return 'Arsenal';
+                case 'Leicester City':
+                    return 'Leicester';
+                case 'Watford':
+                    return 'Watford';
+                case 'Liverpool':
+                    return 'Liverpool';
+                case 'Southampton':
+                    return 'Southampton';
+                case 'Swansea City':
+                    return 'Swansea';
+                case 'West Bromwich Albion':
+                    return 'WestBrom';
+                case 'AFC Bournemouth':
+                    return 'Bournemouth';
+                case 'Everton':
+                    return 'Everton';
+                case 'Stoke City':
+                    return 'Stoke';
+                case 'Crystal Palace':
+                    return 'CrystalPalace';
+                case 'Huddersfield Town':
+                    return 'Huddersfield';
+                case 'Chelsea':
+                    return 'Chelsea';
+                case 'Burnley':
+                    return 'Burnley';
+                case 'Brighton & Hove Albion':
+                    return 'Brighton';
+                case 'Manchester City':
+                    return 'ManCity';
+                case 'Newcastle United':
+                    return 'Newcastle';
+                case 'Tottenham Hotspur':
+                    return 'Tottenham';
+                case 'Manchester United':
+                    return 'ManUtd';
+                case 'West Ham United':
+                    return 'WestHam';
+                default:
+                    return 'Arsenal';
+            }
+        }
+        function isInArray(value, array) { return array.indexOf(value) > -1; }
+    </script>
+</head>
+<body ng-controller="FootlyticController" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Footylytic</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/#about">About</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/live">Live!</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/future">Future</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- page content -->
+    <div class="container">
+        <!-- Jumbotron Header -->
+      <header class="jumbotron my-4">
+        <h1 class="display-3">Live Games</h1>
+        <p class="lead">The following container contains the probabilities of the outcome for various football games based on data from Twitter and previous historical data for today's games.</p>
+        </header>
+
+        <div class="row text-center">
+            <div id="fixtures"></div>
+            <script>
+                var fixtures = {{ data|tojson }};
+                var myTeams = [9002,9158,9423,9287,9378,9260];
+                if (fixtures == '') document.getElementById('fixtures').innerHTML = "<h3 style='text-align: center;'>There are no matches today<h3/>";
+
+                var fi = document.getElementById('fixtures');
+                var tbl     = document.createElement("table");
+                tbl.classList.add("table");
+                tbl.classList.add("table-bordered");
+                var tblBody = document.createElement("tbody");
+                for (var i = 0; i < fixtures.length; i++) {
+
+                        var row = document.createElement("tr");
+                        var date = document.createElement("td");
+                        var mins_played = document.createElement("td");
+                        var space = document.createElement("td");
+                        var home = document.createElement("td");
+                        var vs = document.createElement("td");
+                        var away = document.createElement("td");
+                        var link = document.createElement("td");
+                        var go = document.createElement("td");
+                        var d = fixtures[i].time;
+                        date.appendChild(document.createTextNode(d));
+                        var timer = fixtures[i].timer == '' ? 0 : fixtures[i].timer;
+                        if (fixtures[i].status == 'HT') {
+                            timer = 'HT';
+                        }
+                        if (fixtures[i].status == 'FT') {
+                            timer = 'FT';
+                        }
+                        mins_played.appendChild(document.createTextNode(timer));
+                        var homescore = (fixtures[i].localteam_score == '' ? 0 : fixtures[i].localteam_score);
+                        var awayscore = (fixtures[i].visitorteam_score == '' ? 0 : fixtures[i].visitorteam_score);
+                        space.appendChild(document.createTextNode(homescore))
+                        home.appendChild(document.createTextNode(fixtures[i].localteam_name));
+                        vs.appendChild(document.createTextNode(" Vs. "))
+                        away.appendChild(document.createTextNode(fixtures[i].visitorteam_name));
+                        link.appendChild(document.createTextNode(awayscore));
+                        var createLink = document.createElement("a");
+                        if (isInArray(fixtures[i].localteam_id, myTeams)) {
+                            createLink.href = "./live/" + parseTeamName(fixtures[i].localteam_name) + "/" + parseTeamName(fixtures[i].visitorteam_name);
+                        } else {
+                            createLink.href = "./live/" + parseTeamName(fixtures[i].visitorteam_name) + "/" + parseTeamName(fixtures[i].localteam_name);
+                        }
+
+                        createLink.text = "GO";
+                        go.appendChild(createLink);
+
+                        row.appendChild(date);
+                        row.appendChild(mins_played);
+                        row.appendChild(home);
+                        row.appendChild(space);
+                        row.appendChild(vs);
+                        row.appendChild(link);
+                        row.appendChild(away);
+                        row.appendChild(go);
+                        tblBody.appendChild(row);
+
+                }
+                tbl.appendChild(tblBody);
+                fi.appendChild(tbl);
+            </script>
+
+
+
+    </div>
+
+
+    <!-- scripts -->
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Plugin JavaScript -->
+    <script src="{{ url_for('static', filename='jquery-easing/jquery.easing.min.js') }}"></script>
+    <!-- Custom scripts for this template -->
+    <script src="{{ url_for('static', filename='grayscale.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

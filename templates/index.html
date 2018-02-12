@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="Footlytic">
+<head>
+    <meta charset="UTF-8">
+    <title>Footlytic</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='grayscale.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body ng-controller="FootlyticController" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Footylytic</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/#about">About</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/live">Live!</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/future">Future</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="masthead">
+      <div class="intro-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <h1 class="brand-heading">Footylytic</h1>
+              <a href="#about" class="btn btn-circle js-scroll-trigger">
+                <i class="fa fa-angle-double-down animated"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="about" class="content-section text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>About Footylytic</h2>
+            <p>Footylytic is a web application written entirely in python that uses historical (statistical) data as well as data taken from Twitter to determine the outcome of various football matches.</p>
+            <p>Future games (games that are not being played today) are more heavily weighted towards using the statistical data provided whereas any game in progress will have more tweets about it on the day and therefore takes more emphasis on it.</p>
+            <p>The analysis provided only covers the premier league and from that, only a select few teams due to the differences in playing style. Currently the system only supports: Arsenal.</p>
+            <p>Click below to get started!</p>
+             <a href="/live" class="btn btn-success" role="button">Live Games!</a> <a href="/future" class="btn btn-success" role="button">Future Games</a>
+          </div>
+        </div>
+      </div>
+    <!-- scripts -->
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Plugin JavaScript -->
+    <script src="{{ url_for('static', filename='jquery-easing/jquery.easing.min.js') }}"></script>
+    <!-- Custom scripts for this template -->
+    <script src="{{ url_for('static', filename='grayscale.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

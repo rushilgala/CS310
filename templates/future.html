@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="Footlytic">
+<head>
+    <meta charset="UTF-8">
+    <title>Footlytic - Future</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='grayscale.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+</head>
+<body ng-controller="FootlyticController" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Footylytic</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/#about">About</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/live">Live!</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/future">Future</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- page content -->
+    <div class="container">
+        <!-- Jumbotron Header -->
+      <header class="jumbotron my-4">
+        <h1 class="display-3">Future games</h1>
+        <p class="lead">Select a team to view their upcoming games.</p>
+      </header>
+
+        <div class="row text-center">
+
+        <!-- Arsenal -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/5/53/Arsenal_FC.svg/180px-Arsenal_FC.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Arsenal</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/Arsenal" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manchester United -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7a/Manchester_United_FC_crest.svg/220px-Manchester_United_FC_crest.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Man. United</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/ManUtd" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Watford -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e2/Watford.svg/185px-Watford.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Watford</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/Watford" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+         <!-- Everton -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/7/7c/Everton_FC_logo.svg/220px-Everton_FC_logo.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Everton</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/Everton" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+
+         <!-- Newcastle -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Newcastle_United_Logo.svg/200px-Newcastle_United_Logo.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Newcastle</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/Newcastle" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+
+         <!-- Stoke -->
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="card">
+            <img class="card-img-top" width="220" height="254" src="https://upload.wikimedia.org/wikipedia/en/thumb/2/29/Stoke_City_FC.svg/220px-Stoke_City_FC.svg.png" alt="">
+            <div class="card-body">
+              <h4 class="card-title">Stoke City</h4>
+            </div>
+            <div class="card-footer">
+              <a href="/future/Stoke" class="btn btn-primary">Search!</a>
+            </div>
+          </div>
+        </div>
+
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Plugin JavaScript -->
+    <script src="{{ url_for('static', filename='jquery-easing/jquery.easing.min.js') }}"></script>
+    <!-- Custom scripts for this template -->
+    <script src="{{ url_for('static', filename='grayscale.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>

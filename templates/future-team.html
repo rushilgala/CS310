@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="Footlytic">
+<head>
+    <meta charset="UTF-8">
+    <title>Footlytic - Future - {{ team }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- styles -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome/css/font-awesome.min.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='grayscale.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <style>#fixtures{margin-left: auto;margin-right: auto;}</style>
+    <script>
+        function parseTeamName(team) {
+            switch (team) {
+                case 'Arsenal':
+                    return 'Arsenal';
+                case 'Man Utd':
+                    return 'ManUtd';
+                case 'Watford':
+                    return 'Watford';
+                case 'Everton':
+                    return 'Everton';
+                case 'Newcastle':
+                    return 'Newcastle';
+                case 'Stoke City':
+                    return 'Stoke';
+                case 'Arsenal FC':
+                    return 'Arsenal';
+                case 'Leicester City FC':
+                    return 'Leicester';
+                case 'Watford FC':
+                    return 'Watford';
+                case 'Liverpool FC':
+                    return 'Liverpool';
+                case 'Southampton FC':
+                    return 'Southampton';
+                case 'Swansea City FC':
+                    return 'Swansea';
+                case 'West Bromwich Albion FC':
+                    return 'WestBrom';
+                case 'AFC Bournemouth':
+                    return 'Bournemouth';
+                case 'Everton FC':
+                    return 'Everton';
+                case 'Stoke City FC':
+                    return 'Stoke';
+                case 'Crystal Palace FC':
+                    return 'CrystalPalace';
+                case 'Huddersfield Town':
+                    return 'Huddersfield';
+                case 'Chelsea FC':
+                    return 'Chelsea';
+                case 'Burnley FC':
+                    return 'Burnley';
+                case 'Brighton & Hove Albion':
+                    return 'Brighton';
+                case 'Manchester City FC':
+                    return 'ManCity';
+                case 'Newcastle United FC':
+                    return 'Newcastle';
+                case 'Tottenham Hotspur FC':
+                    return 'Tottenham';
+                case 'Manchester United FC':
+                    return 'ManUtd';
+                case 'West Ham United FC':
+                    return 'WestHam';
+
+                default:
+                    return 'Arsenal';
+
+
+
+            }
+        }
+    </script>
+
+</head>
+<body ng-controller="FootlyticController" id="page-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Footylytic</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/#about">About</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/live">Live!</a>
+            </li>
+              <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="/future">Future</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+
+    <!-- page content -->
+    <div class="container">
+        <!-- Jumbotron Header -->
+      <header class="jumbotron my-4">
+        <h1 class="display-3">Future {{ team }} football matches</h1>
+        <p class="lead">Select an upcoming match to see the outcome.</p>
+      </header>
+        <h3><div id="timeframe"></div></h3><div id="clear"></div>
+        <div class="row text-center">
+            <div id="fixtures"></div>
+            <script>
+                var myfixtures = {{ opps|tojson }};
+                var json = JSON.parse(myfixtures);
+                var teamId = {{ id }}
+                var myTeam = "{{ team }}"
+                var t = parseTeamName(myTeam);
+
+
+                var tf = document.getElementById('timeframe');
+                tf.innerHTML = (new Date(json.timeFrameStart)).toDateString() + " - " + (new Date(json.timeFrameEnd)).toDateString();
+                var fi = document.getElementById('fixtures');
+                var tbl     = document.createElement("table");
+                tbl.classList.add("table");
+                tbl.classList.add("table-bordered");
+                var tblBody = document.createElement("tbody");
+                for (var i = 0; i < json.count; i++) {
+                    if (json.fixtures[i].competitionId == '445') {
+                        var row = document.createElement("tr");
+                        var date = document.createElement("td");
+                        var space = document.createElement("td");
+                        var home = document.createElement("td");
+                        var vs = document.createElement("td");
+                        var away = document.createElement("td");
+                        var link = document.createElement("td");
+                        var go = document.createElement("td");
+                        var d = new Date(json.fixtures[i].date);
+                        var linkDate = d.getFullYear() + '-' + parseInt(d.getMonth()+1) + '-' + d.getDate();
+                        date.appendChild(document.createTextNode(d.toDateString('dd-MM-yyyy')));
+                        space.appendChild(document.createTextNode("         "))
+                        home.appendChild(document.createTextNode(json.fixtures[i].homeTeamName));
+                        vs.appendChild(document.createTextNode(" Vs. "))
+                        away.appendChild(document.createTextNode(json.fixtures[i].awayTeamName));
+                        link.appendChild(document.createTextNode("          "));
+                        var createLink = document.createElement("a");
+                        if (json.fixtures[i].homeTeamId == teamId) {
+
+                            createLink.href = "./" + linkDate + "/" + t + "/" + parseTeamName(json.fixtures[i].awayTeamName);
+
+                        } else {
+                            createLink.href = "./" + linkDate + "/" + t + "/" +parseTeamName(json.fixtures[i].homeTeamName);
+                        }
+                        createLink.text = "GO";
+                        go.appendChild(createLink);
+
+                        row.appendChild(date);
+                        row.appendChild(space);
+                        row.appendChild(home);
+                        row.appendChild(vs);
+                        row.appendChild(away);
+                        row.appendChild(link);
+                        row.appendChild(go);
+                        tblBody.appendChild(row);
+                    }
+                }
+                tbl.appendChild(tblBody);
+                fi.appendChild(tbl);
+            </script>
+
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- Plugin JavaScript -->
+    <script src="{{ url_for('static', filename='jquery-easing/jquery.easing.min.js') }}"></script>
+    <!-- Custom scripts for this template -->
+    <script src="{{ url_for('static', filename='grayscale.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
