@@ -19,10 +19,10 @@ def live():
 @app.route('/live/<team>/<opp>', methods=['GET', 'POST'])
 def live_calc(team, opp):
     team_final_prob, opp_final_prob, draw_final_prob = functions.calc_live(team, opp)
-    draw_final = float(draw_final_prob) * int(100)
-    team_final = float(team_final_prob) * int(100)
-    opp_final = float(opp_final_prob) * int(100)
-    return render_template('live-game.html', team=team, opp=opp, team_final=int(team_final), opp_final=int(opp_final), draw_final=int(draw_final))
+    team_final = int(float(team_final_prob) * int(100))
+    opp_final = int(float(opp_final_prob) * int(100))
+    draw_final = int(100 - (opp_final + team_final))
+    return render_template('live-game.html', team=team, opp=opp, team_final=team_final, opp_final=opp_final, draw_final=draw_final)
 
 
 @app.route('/future', methods=['GET', 'POST'])

@@ -48,13 +48,12 @@
       </header>
 
         <div class="row text-center">
-            <div class="col-sm-6"><h4>{{ team }}: {{ team_final }}%</h4></div>
-            <div class="col-sm-6"><h4>{{ opp }}: {{ opp_final }}%</h4></div>
-        </div>
-        <div class="row">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4"><canvas id="doughnutChart"></canvas></div>
-            <div class="col-sm-4"></div>
+            <div class="col-sm-4"><h4>{{ opp }}: {{ opp_final }}%</h4></div>
+            <div class="col-sm-4">
+                <h4>Draw: {{ draw_final }}%</h4>
+                <canvas id="doughnutChart"></canvas>
+            </div>
+            <div class="col-sm-4"><h4>{{ team }}: {{ team_final }}%</div>
         </div>
     </div>
 
@@ -73,16 +72,17 @@
         var opp = "{{ opp }}";
         var t_score = "{{ team_final }}";
         var o_score = "{{ opp_final }}";
+        var d_score = "{{ draw_final }}";
         var myLineChart = new Chart(ctxD, {
         type: 'doughnut',
 
             data: {
-                labels: [team, opp],
+                labels: [team, "Draw", opp],
                 datasets: [
                     {
-                        data: [t_score, o_score],
-                        backgroundColor: ["#F7464A", "#46BFBD"],
-                        hoverBackgroundColor: ["#FF5A5E", "#5AD3D1"]
+                        data: [t_score, d_score, o_score],
+                        backgroundColor: ["#F7464A", "#FDB45C", "#46BFBD"],
+                        hoverBackgroundColor: ["#FF5A5E", "#FFC870", "#5AD3D1"]
                     }
                 ]
             },
