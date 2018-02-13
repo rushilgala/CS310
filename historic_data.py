@@ -13,9 +13,9 @@ def calc_historic(date, team, opp):
     is_team_home = False  # Set our watched team to false initially, we will do some digging to see
     date = datetime.strptime(date, '%Y-%m-%d')
     # Give each side a base score of 50
-    our_team = 50
-    opp_team = 50
-    draw = 0
+    our_team = 33
+    opp_team = 33
+    draw = 33
     # Hit the APIs for data
     connection = http.client.HTTPConnection('api.football-api.com')
     connection.request('GET', '/2.0/team/' + str(team_id_b) + '?Authorization=' + str(config.FOOTBALL_API_KEY), None)
@@ -28,6 +28,7 @@ def calc_historic(date, team, opp):
     connection.request('GET', '/v1/teams/' + str(team_id_a) + '/fixtures?timeFrame=n28', None, headers)
     data = json.loads(connection.getresponse().read().decode())
     if 'fixtures' in data:
+        print('1. Getting fixtures..')
         fixtures = data['fixtures']
         for i in range(0, len(fixtures)):
             date = fixtures[i]['date']
@@ -43,7 +44,7 @@ def calc_historic(date, team, opp):
     if 'statistics' in team_data:
         # Add 10*(homeWon/AllHomeGames) to home team and 10*(awayWon/allAwayGames) to away team
         # Conditional Probability
-
+        print('2. Getting stats...')
         if is_team_home is True:
             # Team is home, opp is away
             our_team += 10 * int(int(team_data["statistics"][0]["wins_home"]) /
@@ -103,6 +104,7 @@ def calc_historic(date, team, opp):
     except urllib.error.HTTPError as e:
         data = ''
     if data is not '':
+        print('3. Getting match id...')
         match_id = data[0]['dbid']
         request_url = 'https://api.crowdscores.com/v1/matches/' + str(match_id) + '/additional-data?api_key=' + str(config.CROWD_SCORE_KEY)
     try:
@@ -124,6 +126,7 @@ def calc_historic(date, team, opp):
     # 2 variables - (a) how recent (b) W/D/L
     # Most recent game: 5 * (W=3, D=1, L=-1) + 4 * (W=3,D=1,L=-1) ...
     if data is not '':
+        print('4. Working out form and h2h...')
         home_form = data['additionalStats']['home']['form']
         away_form = data['additionalStats']['away']['form']
         for i in range(0, 5):

@@ -39,12 +39,12 @@ def future_team(team):
 @app.route('/future/<date>/<team>/<opp>', methods=['GET', 'POST'])
 def future_games(date, team, opp):
     team_final_prob, opp_final_prob, draw_final_prob = functions.calc_future(date, team, opp)
-    team_final = float(team_final_prob) * int(100)
-    opp_final = float(opp_final_prob) * int(100)
-    draw_final = float(draw_final_prob) * int(100)
+    team_final = int(float(team_final_prob) * int(100))
+    opp_final = int(float(opp_final_prob) * int(100))
+    draw_final = int(100 - (opp_final + team_final))
     date_dt = datetime.strptime(date, '%Y-%m-%d')
     date = datetime.strftime(date_dt, '%a %d %b %Y')
-    return render_template('future-game.html', team=team, opp=opp, date=date, team_final=int(team_final), opp_final=int(opp_final), draw_final=int(draw_final))
+    return render_template('future-game.html', team=team, opp=opp, date=date, team_final=team_final, opp_final=opp_final, draw_final=draw_final)
 
 
 if __name__ == '__main__':
