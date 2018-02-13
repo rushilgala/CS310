@@ -145,6 +145,7 @@ def obtain_opponents(team_id):
 def calc_h2h_points(winner, h2h, i, team_id):
     our_score = 0
     opp_score = 0
+    draw = 0
     if int(h2h[i]['awayTeam']['dbid']) == team_id:
         if winner == 'home':
             # Our team lost
@@ -156,8 +157,7 @@ def calc_h2h_points(winner, h2h, i, team_id):
             opp_score += 5 * calc_form('loss')
         else:
             # Most likely a draw
-            our_score += 5
-            opp_score += 5
+            draw += 1
     else:  # We are the home team
         if winner == 'away':
             # Our team lost
@@ -169,7 +169,6 @@ def calc_h2h_points(winner, h2h, i, team_id):
             opp_score += 5 * calc_form('loss')
         else:
             # Most likely a draw
-            our_score += 5
-            opp_score += 5
+            draw += 1
 
-    return our_score, opp_score
+    return our_score, opp_score, draw

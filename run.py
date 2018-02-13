@@ -18,10 +18,11 @@ def live():
 
 @app.route('/live/<team>/<opp>', methods=['GET', 'POST'])
 def live_calc(team, opp):
-    team_final_prob, opp_final_prob = functions.calc_live(team, opp)
+    team_final_prob, opp_final_prob, draw_final_prob = functions.calc_live(team, opp)
+    draw_final = float(draw_final_prob) * int(100)
     team_final = float(team_final_prob) * int(100)
     opp_final = float(opp_final_prob) * int(100)
-    return render_template('live-game.html', team=team, opp=opp, team_final=int(team_final), opp_final=int(opp_final))
+    return render_template('live-game.html', team=team, opp=opp, team_final=int(team_final), opp_final=int(opp_final), draw_final=int(draw_final))
 
 
 @app.route('/future', methods=['GET', 'POST'])
@@ -37,12 +38,13 @@ def future_team(team):
 
 @app.route('/future/<date>/<team>/<opp>', methods=['GET', 'POST'])
 def future_games(date, team, opp):
-    team_final_prob, opp_final_prob = functions.calc_future(date, team, opp)
+    team_final_prob, opp_final_prob, draw_final_prob = functions.calc_future(date, team, opp)
     team_final = float(team_final_prob) * int(100)
     opp_final = float(opp_final_prob) * int(100)
+    draw_final = float(draw_final_prob) * int(100)
     date_dt = datetime.strptime(date, '%Y-%m-%d')
     date = datetime.strftime(date_dt, '%a %d %b %Y')
-    return render_template('future-game.html', team=team, opp=opp, date=date, team_final=int(team_final), opp_final=int(opp_final))
+    return render_template('future-game.html', team=team, opp=opp, date=date, team_final=int(team_final), opp_final=int(opp_final), draw_final=int(draw_final))
 
 
 if __name__ == '__main__':

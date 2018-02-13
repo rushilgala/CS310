@@ -11,37 +11,40 @@ import util
 
 
 def calc_scores(date, team, opp):
-    team_score_h, opp_score_h = historic_data.calc_historic(date, team, opp)
+    team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp)
     team_score_t, opp_score_t = twitter_data.calc_twitter(team, opp)
 
-    team_h = team_score_h / (team_score_h + opp_score_h)
-    opp_h = opp_score_h / (team_score_h + opp_score_h)
-
+    team_h = team_score_h / (draw_score_h + team_score_h + opp_score_h)
+    opp_h = opp_score_h / (draw_score_h + team_score_h + opp_score_h)
+    draw_h = draw_score_h / (draw_score_h + team_score_h + opp_score_h)
     team_t = team_score_t / (team_score_t + opp_score_t)
     opp_t = opp_score_t / (team_score_t + opp_score_t)
-    return team_h, opp_h, team_t, opp_t
+    return team_h, opp_h, draw_h, team_t, opp_t
 
 
 def calc_live(team, opp):
     date = datetime.today()
     date = date.strftime('%Y-%m-%d')
-    team_h, opp_h, team_t, opp_t = calc_scores(date, team, opp)
+    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp)
     team_final = (0.1 * team_h) + (0.9 * team_t)
     opp_final = (0.1 * opp_h) + (0.9 * opp_t)
     # Formatting...
+    draw_h = '{0:.2f}'.format(float(1 - team_final - opp_final))
     team_final = '{0:.2f}'.format(team_final)
     opp_final = '{0:.2f}'.format(opp_final)
-    return team_final, opp_final
+    return team_final, opp_final, draw_h
 
 
 def calc_future(date, team, opp):
-    team_h, opp_h, team_t, opp_t = calc_scores(date, team, opp)
+    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp)
     team_final = (0.9 * team_h) + (0.1 * team_t)
     opp_final = (0.9 * opp_h) + (0.1 * opp_t)
     # Formatting
+    draw_h = '{0:.2f}'.format(draw_h)
     team_final = '{0:.2f}'.format(team_final)
     opp_final = '{0:.2f}'.format(opp_final)
-    return team_final, opp_final
+
+    return team_final, opp_final, draw_h
 
 
 def get_live_matches():
