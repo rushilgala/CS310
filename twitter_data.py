@@ -126,7 +126,7 @@ def calc_twitter(team, opp):
     opp_key_a = util.get_key_by_name(opp)
     team_tag = util.get_tag_by_name(team)
     opp_tag = util.get_tag_by_name(opp)
-    max_tweets = 50  # This value could be changed to increase / decrease depending on volume
+    max_tweets = 500  # This value could be changed to increase / decrease depending on volume
     api, auth = get_twitter_api_session()
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
