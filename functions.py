@@ -37,8 +37,8 @@ def calc_live(team, opp):
 
 def calc_future(date, team, opp):
     team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp)
-    team_final = (0.9 * team_h) + (0.1 * team_t)
-    opp_final = (0.9 * opp_h) + (0.1 * opp_t)
+    team_final = (0.95 * team_h) + (0.05 * team_t)
+    opp_final = (0.95 * opp_h) + (0.05 * opp_t)
     # Formatting
     draw_h = '{0:.2f}'.format(draw_h)
     team_final = '{0:.2f}'.format(team_final)
