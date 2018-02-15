@@ -93,7 +93,7 @@ def calc_historic(date, team, opp):
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('http')
+        print(e + ': Match ID error')
         data = ''
     except UnicodeEncodeError as e:
         data = ''
@@ -112,7 +112,7 @@ def calc_historic(date, team, opp):
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('http')
+        print(e + ': Form and h2h error')
         data = ''
     except UnicodeEncodeError as e:
         data = ''
