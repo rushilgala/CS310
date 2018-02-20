@@ -72,7 +72,7 @@ def get_live_match(team):
     today = time.strftime("%Y-%m-%d")
     test_date = '2018-02-25'
     team_a, team_b, team_c = util.get_id_by_name(team)
-    request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(team_b) + '&match_date=' + test_date + '&Authorization=' + config.FOOTBALL_API_KEY
+    request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(team_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
     try:
         url = urllib.request.Request(request_url)
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
