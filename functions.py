@@ -55,7 +55,7 @@ def get_live_matches():
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('http');
+        print('Error getting multiple matches');
         data = ''
     except UnicodeEncodeError as e:
         data = ''
@@ -66,6 +66,45 @@ def get_live_matches():
     except urllib.error.HTTPError as e:
         data = ''
     return data
+
+
+def get_live_match(team):
+    today = time.strftime("%Y-%m-%d")
+    test_date = '2018-02-25'
+    team_a, team_b, team_c = util.get_id_by_name(team)
+    request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(team_b) + '&match_date=' + test_date + '&Authorization=' + config.FOOTBALL_API_KEY
+    try:
+        url = urllib.request.Request(request_url)
+        data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
+        data = json.loads(data)
+    except urllib.error.URLError as e:
+        print('Single live match error');
+        data = ''
+    except UnicodeEncodeError as e:
+        data = ''
+    except http.client.BadStatusLine as e:
+        data = ''
+    except http.client.IncompleteRead as e:
+        data = ''
+    except urllib.error.HTTPError as e:
+        data = ''
+    team, opponent, status = '0', '0', '0'
+    if data is not '':
+        data = data[0]
+        status = data['timer']
+        if status is '':
+            status = '0'
+        if data['localteam_id'] == team_b:
+            team = data['localteam_score']
+            opponent = data['visitorteam_score']
+        else:
+            team = data['visitorteam_score']
+            opponent = data['localteam_score']
+        if team is '':
+            team = '0'
+        if opponent is '':
+            opponent = '0'
+    return status, team, opponent
 
 
 def get_future_matches(team):
