@@ -25,8 +25,8 @@ def calc_live(team, opp):
     date = datetime.today()
     date = date.strftime('%Y-%m-%d')
     team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, True)
-    team_final = (0.1 * team_h) + (0.9 * team_t)
-    opp_final = (0.1 * opp_h) + (0.9 * opp_t)
+    team_final = (0.15 * team_h) + (0.85 * team_t)
+    opp_final = (0.15 * opp_h) + (0.85 * opp_t)
     # Formatting...
     draw_h = '{0:.2f}'.format(float(1 - team_final - opp_final))
     team_final = '{0:.2f}'.format(team_final)
