@@ -6,12 +6,11 @@ import json
 import http.client
 import config
 from datetime import datetime
-
 import util
 
 
-def calc_scores(date, team, opp):
-    team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp)
+def calc_scores(date, team, opp, isLive):
+    team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp, isLive)
     team_score_t, opp_score_t = twitter_data.calc_twitter(team, opp)
 
     team_h = team_score_h / (draw_score_h + team_score_h + opp_score_h)
@@ -25,7 +24,7 @@ def calc_scores(date, team, opp):
 def calc_live(team, opp):
     date = datetime.today()
     date = date.strftime('%Y-%m-%d')
-    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp)
+    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, True)
     team_final = (0.1 * team_h) + (0.9 * team_t)
     opp_final = (0.1 * opp_h) + (0.9 * opp_t)
     # Formatting...
@@ -36,7 +35,7 @@ def calc_live(team, opp):
 
 
 def calc_future(date, team, opp):
-    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp)
+    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, False)
     team_final = (0.95 * team_h) + (0.05 * team_t)
     opp_final = (0.95 * opp_h) + (0.05 * opp_t)
     # Formatting
