@@ -4,9 +4,10 @@ from datetime import datetime, timedelta
 import json
 import config
 import urllib.request
+import time
 
 
-def calc_historic(date, team, opp):
+def calc_historic(date, team, opp, isLive):
     # Obtain important identifiers
     team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
     opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
@@ -83,6 +84,64 @@ def calc_historic(date, team, opp):
         # Use their current position - higher gets more points - 2*(21 - position in league)
         our_team += 2*(21 - int(team_data["statistics"][0]["rank"]))
         opp_team += 2*(21 - int(opp_data["statistics"][0]["rank"]))
+
+        # Live historic data - checking to see if they're likely to score
+        if isLive is True:
+            today = time.strftime("%Y-%m-%d")
+            request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(
+                team_id_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
+            try:
+                url = urllib.request.Request(request_url)
+                data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
+                data = json.loads(data)
+            except urllib.error.URLError as e:
+                print('Single live match error');
+                data = ''
+            except UnicodeEncodeError as e:
+                data = ''
+            except http.client.BadStatusLine as e:
+                data = ''
+            except http.client.IncompleteRead as e:
+                data = ''
+            except urllib.error.HTTPError as e:
+                data = ''
+            team, opponent, status = 0, 0, 0
+            if data is not '':
+                data = data[0]
+                status = data['timer']
+                if status is '':
+                    status = 0
+                if int(data['localteam_id']) == team_id_b:
+                    team = int(data['localteam_score'])
+                    opponent = int(data['visitorteam_score'])
+                else:
+                    team = int(data['visitorteam_score'])
+                    opponent = int(data['localteam_score'])
+                if team is '':
+                    team = 0
+                if opponent is '':
+                    opponent = 0
+                goals_team_total = int(team_data["statistics"][0]["goals"])
+                goals_opp_total = int(opp_data["statistics"][0]["goals"])
+
+                if status <= 15:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_0_15_cnt"])/goals_team_total)+1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_0_15_cnt"]) / goals_opp_total) + 1)
+                if 15 <= status <= 30:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_team_total) + 1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_opp_total) + 1)
+                if 30 <= status <= 45:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_team_total) + 1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_opp_total) + 1)
+                if 45 <= status <= 60:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_team_total) + 1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_opp_total) + 1)
+                if 60 <= status <= 75:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_team_total) + 1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_opp_total) + 1)
+                if 75 <= status:
+                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
+                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_opp_total) + 1)
     # Obtain data from crowdscores for form and H2H
     DAY = timedelta(1)
     day_from = (date - DAY).strftime('%Y-%m-%dT%H:%M:%S')
