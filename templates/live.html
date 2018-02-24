@@ -14,8 +14,10 @@
     <style>#fixtures{margin-left: auto;margin-right: auto;}</style>
     <script>
         function parseTeamName(team) {
+
             switch (team) {
                 case 'Arsenal':
+                    console.log('Wrong one');
                     return 'Arsenal';
                 case 'Man Utd':
                     return 'ManUtd';
@@ -25,11 +27,13 @@
                     return 'Everton';
                 case 'Newcastle':
                     return 'Newcastle';
-                case 'Stoke City':
+                case 'Stoke':
                     return 'Stoke';
                 case 'Arsenal':
                     return 'Arsenal';
                 case 'Leicester City':
+                    return 'Leicester';
+                case 'Leicester':
                     return 'Leicester';
                 case 'Watford':
                     return 'Watford';
@@ -42,6 +46,8 @@
                 case 'West Bromwich Albion':
                     return 'WestBrom';
                 case 'AFC Bournemouth':
+                    return 'Bournemouth';
+                case 'Bournemouth':
                     return 'Bournemouth';
                 case 'Everton':
                     return 'Everton';
@@ -148,6 +154,7 @@
                         away.appendChild(document.createTextNode(fixtures[i].visitorteam_name));
                         link.appendChild(document.createTextNode(awayscore));
                         var createLink = document.createElement("a");
+
                         if (isInArray(fixtures[i].localteam_id, myTeams)) {
                             createLink.href = "./live/" + parseTeamName(fixtures[i].localteam_name) + "/" + parseTeamName(fixtures[i].visitorteam_name);
                         } else {
