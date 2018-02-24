@@ -89,10 +89,21 @@ def get_live_match(team):
         data = ''
     team, opponent, status = '0', '0', '0'
     if data is not '':
+        print(data[0])
         data = data[0]
-        status = data['timer']
-        if status is '':
-            status = '0'
+        timer = data['timer']
+        status = data['status']
+        if status == 'HT':
+            timer = 'HT'
+        elif status == 'FT':
+            timer = 'FT'
+        if timer is '':
+            if status is 'HT':
+                timer = 'HT'
+            elif status is 'FT':
+                timer = 'FT'
+            else:
+                timer = '0'
         if data['localteam_id'] == team_b:
             team = data['localteam_score']
             opponent = data['visitorteam_score']
@@ -103,7 +114,8 @@ def get_live_match(team):
             team = '0'
         if opponent is '':
             opponent = '0'
-    return status, team, opponent
+
+    return timer, team, opponent
 
 
 def get_future_matches(team):
