@@ -9,8 +9,8 @@ from datetime import datetime
 import util
 
 
-def calc_scores(date, team, opp, isLive):
-    team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp, isLive)
+def calc_scores(date, team, opp, is_live):
+    team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp, is_live)
     team_score_t, opp_score_t = twitter_data.calc_twitter(team, opp)
 
     team_h = team_score_h / (draw_score_h + team_score_h + opp_score_h)
@@ -25,8 +25,8 @@ def calc_live(team, opp):
     date = datetime.today()
     date = date.strftime('%Y-%m-%d')
     team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, True)
-    team_final = (0.15 * team_h) + (0.85 * team_t)
-    opp_final = (0.15 * opp_h) + (0.85 * opp_t)
+    team_final = (0.2 * team_h) + (0.8 * team_t)
+    opp_final = (0.2 * opp_h) + (0.8 * opp_t)
     # Formatting...
     draw_h = '{0:.2f}'.format(float(1 - team_final - opp_final))
     team_final = '{0:.2f}'.format(team_final)

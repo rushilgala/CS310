@@ -112,11 +112,11 @@ def calc_historic(date, team, opp, isLive):
                 if status is '':
                     status = 0
                 if int(data['localteam_id']) == team_id_b:
-                    team = int(data['localteam_score'])
-                    opponent = int(data['visitorteam_score'])
+                    team = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
+                    opponent = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
                 else:
-                    team = int(data['visitorteam_score'])
-                    opponent = int(data['localteam_score'])
+                    team = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
+                    opponent = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
                 if team is '':
                     team = 0
                 if opponent is '':
@@ -124,22 +124,22 @@ def calc_historic(date, team, opp, isLive):
                 goals_team_total = int(team_data["statistics"][0]["goals"])
                 goals_opp_total = int(opp_data["statistics"][0]["goals"])
 
-                if status <= 15:
+                if int(status) <= 15:
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_0_15_cnt"])/goals_team_total)+1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_0_15_cnt"]) / goals_opp_total) + 1)
-                if 15 <= status <= 30:
+                if 15 <= int(status) <= 30:
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_team_total) + 1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_opp_total) + 1)
-                if 30 <= status <= 45:
+                if 30 <= int(status) <= 45:
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_team_total) + 1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_opp_total) + 1)
-                if 45 <= status <= 60:
+                if 45 <= int(status) <= 60:
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_team_total) + 1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_opp_total) + 1)
-                if 60 <= status <= 75:
+                if 60 <= int(status) <= 75:
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_team_total) + 1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_opp_total) + 1)
-                if 75 <= status:
+                if 75 <= int(status):
                     our_team *= ((int(team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
                     opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_opp_total) + 1)
     # Obtain data from crowdscores for form and H2H

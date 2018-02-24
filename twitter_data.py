@@ -180,7 +180,7 @@ def calc_twitter(team, opp):
     opp_key_a = util.get_key_by_name(opp)
     team_tag = util.get_tag_by_name(team)
     opp_tag = util.get_tag_by_name(opp)
-    max_tweets = 500  # This value could be changed to increase / decrease depending on volume
+    max_tweets = 1000  # This value could be changed to increase / decrease depending on volume
     api, auth = get_twitter_api_session()
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
@@ -196,6 +196,10 @@ def calc_twitter(team, opp):
     team_pos, team_neg = process_tweets(team, max_tweets, search_query_team, api)
     opp_pos, opp_neg = process_tweets(opp, max_tweets, search_query_opp, api)
     # Base case
-    our_team = 50 + team_pos + team_neg
-    opp_team = 50 + opp_pos + opp_neg
+    our_team = 500 + team_pos + team_neg
+    opp_team = 500 + opp_pos + opp_neg
+    if our_team < 0:
+        our_team = 0
+    if opp_team < 0:
+        opp_team = 0
     return our_team, opp_team
