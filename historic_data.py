@@ -7,8 +7,9 @@ import urllib.request
 import time
 
 
-def calc_historic(date, team, opp, isLive):
+def calc_historic(date, team, opp, is_live):
     # Obtain important identifiers
+    guard = ''
     team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
     opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
     is_team_home = False  # Set our watched team to false initially, we will do some digging to see
@@ -86,7 +87,7 @@ def calc_historic(date, team, opp, isLive):
         opp_team += 2*(21 - int(opp_data["statistics"][0]["rank"]))
 
         # Live historic data - checking to see if they're likely to score
-        if isLive is True:
+        if is_live is True:
             today = time.strftime("%Y-%m-%d")
             request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(
                 team_id_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
@@ -94,6 +95,7 @@ def calc_historic(date, team, opp, isLive):
                 url = urllib.request.Request(request_url)
                 data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
                 data = json.loads(data)
+                guard = data[0]
             except urllib.error.URLError as e:
                 print('Single live match error');
                 data = ''
@@ -127,80 +129,89 @@ def calc_historic(date, team, opp, isLive):
                     opponent = 0
                 goals_team_total = int(team_data["statistics"][0]["goals"])
                 goals_opp_total = int(opp_data["statistics"][0]["goals"])
-                if goals_team_total == goals_opp_total:
-                    draw *= 5
-                if goals_team_total < goals_opp_total:
-                    our_team *= 0.75
-                    opp_team *= 1.25
-                if goals_opp_total < goals_team_total:
-                    our_team *= 1.25
-                    opp_team *= 0.75
-                if int(status) <= 15:
-                    if goals_team_total == goals_opp_total:
-                        draw *= 1
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.5
-                        opp_team *= 1.5
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 1.5
-                        opp_team *= 0.5
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_0_15_cnt"])/goals_team_total)+1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_0_15_cnt"]) / goals_opp_total) + 1)
-                if 15 <= int(status) <= 30:
-                    if goals_team_total == goals_opp_total:
-                        draw *= 2
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.8
-                        opp_team *= 2
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 2
-                        opp_team *= 0.8
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_team_total) + 1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_opp_total) + 1)
-                if 30 <= int(status) <= 45:
-                    if goals_team_total == goals_opp_total:
-                        draw *= 4
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.8
-                        opp_team *= 2.5
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 2.5
-                        opp_team *= 0.8
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_team_total) + 1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_opp_total) + 1)
-                if 45 <= int(status) <= 60:
-                    if goals_team_total == goals_opp_total:
-                        draw *= 6
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.7
-                        opp_team *= 3
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 3
-                        opp_team *= 0.7
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_team_total) + 1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_opp_total) + 1)
-                if 60 <= int(status) <= 75:
-                    if goals_team_total == goals_opp_total:
-                        draw *= 8
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.6
-                        opp_team *= 3.5
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 3.5
-                        opp_team *= 0.6
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_team_total) + 1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_opp_total) + 1)
-                if 75 <= int(status):
-                    if goals_team_total == goals_opp_total:
-                        draw *= 10
-                    if goals_team_total < goals_opp_total:
-                        our_team *= 0.5
-                        opp_team *= 4
-                    if goals_opp_total < goals_team_total:
-                        our_team *= 4
-                        opp_team *= 0.5
-                    our_team *= ((int(team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
-                    opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_opp_total) + 1)
+                diff = abs(team - opponent)
+                if int(status) > 0:
+                    if int(status) <= 15:
+                        if team == opponent:
+                            draw *= 1.2
+                        if team < opponent:
+                            our_team *= 0.5 * diff
+                            opp_team *= 1.2 * diff
+                        if opponent < team:
+                            our_team *= 1.2 * diff
+                            opp_team *= 0.5 * diff
+                        our_team *= ((int(team_data["statistics"][0]["scoring_minutes_0_15_cnt"])/goals_team_total)+1)
+                        opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_0_15_cnt"]) / goals_opp_total) + 1)
+                    if 15 <= int(status) <= 30:
+                        if team == opponent:
+                            draw *= 1.3
+                        if team < opponent:
+                            our_team *= 0.8 * diff
+                            opp_team *= 1.3 * diff
+                        if opponent < team:
+                            our_team *= 1.3 * diff
+                            opp_team *= 0.8 * diff
+                        our_team *= ((int(team_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_team_total) + 1)
+                        opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_opp_total) + 1)
+                    if 30 <= int(status) <= 45:
+                        if team == opponent:
+                            draw *= 1.35
+                        if team < opponent:
+                            our_team *= 0.8 * diff
+                            opp_team *= 1.4 * diff
+                        if opponent < team:
+                            our_team *= 1.4 * diff
+                            opp_team *= 0.8 * diff
+                        our_team *= ((int(team_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_team_total) + 1)
+                        opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_opp_total) + 1)
+                    if 45 <= int(status) <= 60:
+                        if team == opponent:
+                            draw *= 1.4
+                        if team < opponent:
+                            our_team *= 0.7 * diff
+                            opp_team *= 1.6 * diff
+                        if opponent < team:
+                            our_team *= 1.6 * diff
+                            opp_team *= 0.7 * diff
+                        our_team *= ((int(team_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_team_total) + 1)
+                        opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_opp_total) + 1)
+                    if 60 <= int(status) <= 75:
+                        if team == opponent:
+                            draw *= 1.45
+                        if team < opponent:
+                            our_team *= 0.6 * diff
+                            opp_team *= 1.8 * diff
+                        if opponent < team:
+                            our_team *= 1.8 * diff
+                            opp_team *= 0.6 * diff
+                        our_team *= ((int(team_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_team_total) + 1)
+                        opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_opp_total) + 1)
+                    if 75 <= int(status) <= 87:
+                        if team == opponent:
+                            draw *= 1.6
+                        if team < opponent:
+                            our_team *= 0.5 * diff
+                            opp_team *= 2 * diff
+                        if opponent < team:
+                            our_team *= 2 * diff
+                            opp_team *= 0.5 * diff
+                        our_team *= ((int(
+                            team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
+                        opp_team *= (
+                                    (int(opp_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_opp_total) + 1)
+                    if 87 <= int(status):
+                        if team == opponent:
+                            draw *= 3
+                        if team < opponent:
+                            our_team *= 0.5 * diff
+                            opp_team *= 5 * diff
+                        if opponent < team:
+                            our_team *= 5 * diff
+                            opp_team *= 0.5 * diff
+                        our_team *= ((int(
+                            team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
+                        opp_team *= (
+                                    (int(opp_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_opp_total) + 1)
     # Obtain data from crowdscores for form and H2H
     DAY = timedelta(1)
     day_from = (date - DAY).strftime('%Y-%m-%dT%H:%M:%S')
@@ -279,4 +290,24 @@ def calc_historic(date, team, opp, isLive):
             our_team += 0
             opp_team += 0
             # Can't do anything as they have never played each other
+    # What if we've already played the game...
+    if guard is not '' and guard['status'] == 'FT' and is_live is True:
+        if int(guard['localteam_id']) == team_id_b:
+            team = int(guard['localteam_score']) if guard['localteam_score'] is not '?' else 0
+            opponent = int(guard['visitorteam_score']) if guard['visitorteam_score'] is not '?' else 0
+        else:
+            team = int(guard['visitorteam_score']) if guard['visitorteam_score'] is not '?' else 0
+            opponent = int(guard['localteam_score']) if guard['localteam_score'] is not '?' else 0
+        if team == opponent:
+            draw = 1
+            our_team = 0
+            opp_team = 0
+        if team < opponent:
+            draw = 0
+            our_team = 0
+            opp_team = 1
+        if opponent < team:
+            draw = 0
+            our_team = 1
+            opp_team = 0
     return our_team, opp_team, draw
