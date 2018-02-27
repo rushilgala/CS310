@@ -11,39 +11,42 @@ import util
 
 def calc_scores(date, team, opp, is_live):
     team_score_h, opp_score_h, draw_score_h = historic_data.calc_historic(date, team, opp, is_live)
-    team_score_t, opp_score_t = twitter_data.calc_twitter(team, opp)
+    team_score_t, opp_score_t, draw_score_t = twitter_data.calc_twitter(team, opp, is_live, config.DEBUG)
 
     team_h = team_score_h / (draw_score_h + team_score_h + opp_score_h)
     opp_h = opp_score_h / (draw_score_h + team_score_h + opp_score_h)
     draw_h = draw_score_h / (draw_score_h + team_score_h + opp_score_h)
-    team_t = team_score_t / (team_score_t + opp_score_t)
-    opp_t = opp_score_t / (team_score_t + opp_score_t)
-    return team_h, opp_h, draw_h, team_t, opp_t
+    team_t = team_score_t / (draw_score_t + team_score_t + opp_score_t)
+    opp_t = opp_score_t / (draw_score_t + team_score_t + opp_score_t)
+    draw_t = draw_score_t / (draw_score_t + team_score_t + opp_score_t)
+    return team_h, opp_h, draw_h, team_t, opp_t, draw_t
 
 
 def calc_live(team, opp):
     date = datetime.today()
     date = date.strftime('%Y-%m-%d')
-    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, True)
-    team_final = (0.2 * team_h) + (0.8 * team_t)
-    opp_final = (0.2 * opp_h) + (0.8 * opp_t)
+    team_h, opp_h, draw_h, team_t, opp_t, draw_t = calc_scores(date, team, opp, True)
+    team_final = (0.3 * team_h) + (0.7 * team_t)
+    opp_final = (0.3 * opp_h) + (0.7 * opp_t)
+    draw_final = (0.3 * draw_h) + (0.7 * draw_t)
     # Formatting...
-    draw_h = '{0:.2f}'.format(float(1 - team_final - opp_final))
+    draw_final = '{0:.2f}'.format(draw_final)
     team_final = '{0:.2f}'.format(team_final)
     opp_final = '{0:.2f}'.format(opp_final)
-    return team_final, opp_final, draw_h
+    return team_final, opp_final, draw_final
 
 
 def calc_future(date, team, opp):
-    team_h, opp_h, draw_h, team_t, opp_t = calc_scores(date, team, opp, False)
-    team_final = (0.95 * team_h) + (0.05 * team_t)
-    opp_final = (0.95 * opp_h) + (0.05 * opp_t)
+    team_h, opp_h, draw_h, team_t, opp_t, draw_t = calc_scores(date, team, opp, False)
+    team_final = (0.9 * team_h) + (0.1 * team_t)
+    opp_final = (0.9 * opp_h) + (0.1 * opp_t)
+    draw_final = (0.9 * draw_h) + (0.1 * draw_t)
     # Formatting
-    draw_h = '{0:.2f}'.format(draw_h)
+    draw_final = '{0:.2f}'.format(draw_final)
     team_final = '{0:.2f}'.format(team_final)
     opp_final = '{0:.2f}'.format(opp_final)
 
-    return team_final, opp_final, draw_h
+    return team_final, opp_final, draw_final
 
 
 def get_live_matches():
@@ -54,7 +57,7 @@ def get_live_matches():
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('Error getting multiple matches');
+        print('Error getting multiple live matches');
         data = ''
     except UnicodeEncodeError as e:
         data = ''
