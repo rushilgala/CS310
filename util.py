@@ -34,7 +34,7 @@ def get_key_by_name(team_name):
         'ManCity': ['#MCFC', '#Mancity'],
         'Tottenham': ['#THFC', '#Spurs', '#coys'],
         'WestHam': ['#Westham', '#hammers', '#whufc']
-    }.get(team_name, 'AFC')
+    }.get(team_name, '#AFC')
 
 
 def get_tag_by_name(team_name):
