@@ -12,6 +12,9 @@ import os
 import jsonpickle
 from collections import Counter
 from collections import defaultdict
+import time
+import urllib.request
+import http.client
 
 # Semantic analysis - PMI Approach
 positive_vocab = [
@@ -72,7 +75,7 @@ def generate_tweets(name, n, query, api):
                 f.write(jsonpickle.encode(tweet._json, unpicklable=False) + '\n')
 
 
-def process_tweets(name, n, query, api):
+def process_tweets(name, n, query, api, debug):
     count_all = Counter()
     count = 0
     tpq = 100
@@ -123,11 +126,15 @@ def process_tweets(name, n, query, api):
     top_neg = semantic_sorted[-50:]
     pos = sum(i[1] for i in top_pos)
     neg = sum(i[1] for i in top_neg)
+    if debug is True:
+        print('Positive tweets: ', top_pos)
+        print('Negative tweets: ', top_neg)
+        print('Positive score: ', pos, ' - Negative score: ', neg)
     return pos, neg
 
 
 def process_tweet(name):
-    with open (os.path.dirname(os.path.abspath(__file__))+'/data/' + name + 'footlytic.json', 'r') as f:
+    with open(os.path.dirname(os.path.abspath(__file__))+'/data/' + name + 'footlytic.json', 'r') as f:
         count_all = Counter()
         count = 0
         for line in f:
@@ -174,13 +181,15 @@ def process_tweet(name):
         return pos, neg
 
 
-def calc_twitter(team, opp):
+def calc_twitter(team, opp, is_live, debug):
     # Obtain important identifiers
     team_key_a = util.get_key_by_name(team)
     opp_key_a = util.get_key_by_name(opp)
     team_tag = util.get_tag_by_name(team)
     opp_tag = util.get_tag_by_name(opp)
-    max_tweets = 1000  # This value could be changed to increase / decrease depending on volume
+    team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
+    opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
+    max_tweets = 1500  # This value could be changed to increase / decrease depending on volume
     api, auth = get_twitter_api_session()
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
@@ -189,17 +198,149 @@ def calc_twitter(team, opp):
     search_query_opp = '#'+team_tag+'v'+opp_tag+' OR #'+opp_tag+'v'+team_tag+' OR '+' OR '.join(opp_key_a)
     # Generate tweet & do calculation
     # DEBUG CODE - writes tweets to file
-    # generate_tweets(team, max_tweets, search_query_team, api)
-    # generate_tweets(opp, max_tweets, search_query_opp, api)
-    # team_pos, team_neg = process_tweet(team)
-    # opp_pos, opp_neg = process_tweet(opp)
-    team_pos, team_neg = process_tweets(team, max_tweets, search_query_team, api)
-    opp_pos, opp_neg = process_tweets(opp, max_tweets, search_query_opp, api)
+    if debug is True:
+        generate_tweets(team, max_tweets, search_query_team, api)
+        generate_tweets(opp, max_tweets, search_query_opp, api)
+        # team_pos, team_neg = process_tweet(team)
+        # opp_pos, opp_neg = process_tweet(opp)
+    team_pos, team_neg = process_tweets(team, max_tweets, search_query_team, api, debug)
+    opp_pos, opp_neg = process_tweets(opp, max_tweets, search_query_opp, api, debug)
     # Base case
     our_team = 500 + team_pos + team_neg
     opp_team = 500 + opp_pos + opp_neg
+    draw = (our_team + opp_team) / 2
+    # Strengthening the draw position by backing up tweets with live stats
+    if is_live is True:
+        today = time.strftime("%Y-%m-%d")
+        request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(
+            team_id_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
+        try:
+            url = urllib.request.Request(request_url)
+            data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
+            data = json.loads(data)
+        except urllib.error.URLError as e:
+            print('Single live match error');
+            data = ''
+        except UnicodeEncodeError as e:
+            data = ''
+        except http.client.BadStatusLine as e:
+            data = ''
+        except http.client.IncompleteRead as e:
+            data = ''
+        except urllib.error.HTTPError as e:
+            data = ''
+        team, opponent, status = 0, 0, 0
+        if data is not '':
+            data = data[0]
+            status = data['timer']
+            if status is '':
+                status = 0
+            if status == '90+':
+                status = 90
+            if status == '45+':
+                status = 45
+            if int(data['localteam_id']) == team_id_b:
+                team = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
+                opponent = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
+            else:
+                team = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
+                opponent = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
+            if team is '':
+                team = 0
+            if opponent is '':
+                opponent = 0
+            diff = abs(team - opponent)
+            if int(status) > 0:
+
+                if int(status) <= 15:
+                    if team == opponent:
+                        draw *= 1.1
+                    if team < opponent:
+                        our_team *= 0.9 * diff
+                        opp_team *= 1.1 * diff
+                    if opponent < team:
+                        our_team *= 1.1 * diff
+                        opp_team *= 0.9 * diff
+                if 15 < int(status) <= 30:
+                    if team == opponent:
+                        draw *= 1.1
+                    if team < opponent:
+                        our_team *= 0.9 * diff
+                        opp_team *= 1.1 * diff
+                    if opponent < team:
+                        our_team *= 1.1 * diff
+                        opp_team *= 0.9 * diff
+                if 30 < int(status) <= 45:
+                    if team == opponent:
+                        draw *= 1.3
+                    if team < opponent:
+                        our_team *= 0.88 * diff
+                        opp_team *= 1.12 * diff
+                    if opponent < team:
+                        our_team *= 1.12 * diff
+                        opp_team *= 0.88 * diff
+                if 45 < int(status) <= 60:
+                    if team == opponent:
+                        draw *= 1.4
+                    if team < opponent:
+                        our_team *= 0.87 * diff
+                        opp_team *= 1.13 * diff
+                    if opponent < team:
+                        our_team *= 1.13 * diff
+                        opp_team *= 0.87 * diff
+                if 60 < int(status) <= 75:
+                    if team == opponent:
+                        draw *= 1.5
+                    if team < opponent:
+                        our_team *= 0.86 * diff
+                        opp_team *= 1.14 * diff
+                    if opponent < team:
+                        our_team *= 1.14 * diff
+                        opp_team *= 0.86 * diff
+                if 75 < int(status) <= 87:
+                    if team == opponent:
+                        draw *= 1.7
+                    if team < opponent:
+                        our_team *= 0.7 * diff
+                        opp_team *= 1.3 * diff
+                    if opponent < team:
+                        our_team *= 1.3 * diff
+                        opp_team *= 0.7 * diff
+                if 87 <= int(status):
+                    if team == opponent:
+                        draw *= 3
+                    if team < opponent:
+                        our_team *= 0.5 * diff
+                        opp_team *= 5 * diff
+                    if opponent < team:
+                        our_team *= 5 * diff
+                        opp_team *= 0.5 * diff
+            # What if we've already played the game...
+            if data['status'] == 'FT':
+                if int(data['localteam_id']) == team_id_b:
+                    team = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
+                    opponent = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
+                else:
+                    team = int(data['visitorteam_score']) if data['visitorteam_score'] is not '?' else 0
+                    opponent = int(data['localteam_score']) if data['localteam_score'] is not '?' else 0
+                if team == opponent:
+                    draw = 1
+                    our_team = 0
+                    opp_team = 0
+                if team < opponent:
+                    draw = 0
+                    our_team = 0
+                    opp_team = 1
+                if opponent < team:
+                    draw = 0
+                    our_team = 1
+                    opp_team = 0
     if our_team < 0:
         our_team = 0
     if opp_team < 0:
         opp_team = 0
-    return our_team, opp_team
+    if draw < 0:
+        draw = 0
+    if debug is True:
+        print('Twitter Scores: ', our_team, ' ', opp_team, ' ', draw)
+    return our_team, opp_team, draw
