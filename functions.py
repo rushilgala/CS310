@@ -81,6 +81,7 @@ def get_live_match(team):
         data = json.loads(data)
     except urllib.error.URLError as e:
         print('Single live match error');
+        print(request_url)
         data = ''
     except UnicodeEncodeError as e:
         data = ''
@@ -90,7 +91,7 @@ def get_live_match(team):
         data = ''
     except urllib.error.HTTPError as e:
         data = ''
-    team, opponent, status = '0', '0', '0'
+    team, opponent, status, timer = '0', '0', '0', '0'
     if data is not '':
         print(data[0])
         data = data[0]
