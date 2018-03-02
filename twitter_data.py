@@ -122,8 +122,8 @@ def process_tweets(name, n, query, api, debug):
     semantic_sorted = sorted(semantic_orientation.items(),
                              key=operator.itemgetter(1),
                              reverse=True)
-    top_pos = semantic_sorted[:50]
-    top_neg = semantic_sorted[-50:]
+    top_pos = semantic_sorted[:150]
+    top_neg = semantic_sorted[-150:]
     pos = sum(i[1] for i in top_pos)
     neg = sum(i[1] for i in top_neg)
     if debug is True:
@@ -189,7 +189,7 @@ def calc_twitter(team, opp, is_live, debug):
     opp_tag = util.get_tag_by_name(opp)
     team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
     opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
-    max_tweets = 1500  # This value could be changed to increase / decrease depending on volume
+    max_tweets = 750  # This value could be changed to increase / decrease depending on volume
     api, auth = get_twitter_api_session()
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
@@ -258,53 +258,65 @@ def calc_twitter(team, opp, is_live, debug):
                     if team < opponent:
                         our_team *= 0.9 * diff
                         opp_team *= 1.1 * diff
+                        draw *= 1 * diff
                     if opponent < team:
                         our_team *= 1.1 * diff
                         opp_team *= 0.9 * diff
+                        draw *= 1 * diff
                 if 15 < int(status) <= 30:
                     if team == opponent:
                         draw *= 1.1
                     if team < opponent:
                         our_team *= 0.9 * diff
                         opp_team *= 1.1 * diff
+                        draw *= 1 * diff
                     if opponent < team:
                         our_team *= 1.1 * diff
                         opp_team *= 0.9 * diff
+                        draw *= 1 * diff
                 if 30 < int(status) <= 45:
                     if team == opponent:
                         draw *= 1.3
                     if team < opponent:
                         our_team *= 0.88 * diff
                         opp_team *= 1.12 * diff
+                        draw *= 1 * diff
                     if opponent < team:
                         our_team *= 1.12 * diff
                         opp_team *= 0.88 * diff
+                        draw *= 1 * diff
                 if 45 < int(status) <= 60:
                     if team == opponent:
                         draw *= 1.4
                     if team < opponent:
                         our_team *= 0.87 * diff
+                        draw *= 1 * diff
                         opp_team *= 1.13 * diff
                     if opponent < team:
                         our_team *= 1.13 * diff
                         opp_team *= 0.87 * diff
+                        draw *= 1 * diff
                 if 60 < int(status) <= 75:
                     if team == opponent:
                         draw *= 1.5
                     if team < opponent:
                         our_team *= 0.86 * diff
+                        draw *= 1 * diff
                         opp_team *= 1.14 * diff
                     if opponent < team:
                         our_team *= 1.14 * diff
+                        draw *= 1 * diff
                         opp_team *= 0.86 * diff
                 if 75 < int(status) <= 87:
                     if team == opponent:
                         draw *= 1.7
                     if team < opponent:
                         our_team *= 0.7 * diff
+                        draw *= 1 * diff
                         opp_team *= 1.3 * diff
                     if opponent < team:
                         our_team *= 1.3 * diff
+                        draw *= 1 * diff
                         opp_team *= 0.7 * diff
                 if 87 <= int(status):
                     if team == opponent:
@@ -312,8 +324,10 @@ def calc_twitter(team, opp, is_live, debug):
                     if team < opponent:
                         our_team *= 0.5 * diff
                         opp_team *= 5 * diff
+                        draw *= 1 * diff
                     if opponent < team:
                         our_team *= 5 * diff
+                        draw *= 1 * diff
                         opp_team *= 0.5 * diff
             # What if we've already played the game...
             if data['status'] == 'FT':
