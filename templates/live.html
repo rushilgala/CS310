@@ -45,6 +45,8 @@
                     return 'Swansea';
                 case 'West Bromwich Albion':
                     return 'WestBrom';
+                case 'West Brom':
+                    return 'WestBrom';
                 case 'AFC Bournemouth':
                     return 'Bournemouth';
                 case 'Bournemouth':
@@ -154,10 +156,10 @@
                         away.appendChild(document.createTextNode(fixtures[i].visitorteam_name));
                         link.appendChild(document.createTextNode(awayscore));
                         var createLink = document.createElement("a");
-
                         if (isInArray(fixtures[i].localteam_id, myTeams)) {
                             createLink.href = "./live/" + parseTeamName(fixtures[i].localteam_name) + "/" + parseTeamName(fixtures[i].visitorteam_name);
                         } else {
+
                             createLink.href = "./live/" + parseTeamName(fixtures[i].visitorteam_name) + "/" + parseTeamName(fixtures[i].localteam_name);
                         }
 
