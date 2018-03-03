@@ -30,6 +30,10 @@ negative_vocab = [
     'piss', 'hostile', 'not good', 'conceed', 'needed', 'failed',
     'frustrating', 'down',
 ]
+
+neutral_vocab = [
+    'draw', 'holding', 'nothing', 'standstill', 'boring', 'nothing'
+]
 # Other variables
 p_t = {}
 p_t_com = defaultdict(lambda: defaultdict(int))
@@ -118,19 +122,23 @@ def process_tweets(name, n, query, api, debug):
     for term, n in p_t.items():
         positive_assoc = sum(pmi[term][tx] for tx in positive_vocab)
         negative_assoc = sum(pmi[term][tx] for tx in negative_vocab)
+        neutral_assoc = sum(pmi[term][tx] for tx in negative_vocab)
         semantic_orientation[term] = positive_assoc - negative_assoc
     semantic_sorted = sorted(semantic_orientation.items(),
                              key=operator.itemgetter(1),
                              reverse=True)
     top_pos = semantic_sorted[:150]
     top_neg = semantic_sorted[-150:]
+    top_neu = semantic_sorted[300:450]
     pos = sum(i[1] for i in top_pos)
     neg = sum(i[1] for i in top_neg)
+    neu = sum(i[1] for i in top_neu)
     if debug is True:
         print('Positive tweets: ', top_pos)
         print('Negative tweets: ', top_neg)
-        print('Positive score: ', pos, ' - Negative score: ', neg)
-    return pos, neg
+        print('Neutral tweets: ', top_neu)
+        print('Positive score: ', pos, ' - Negative score: ', neg, ' - Neutral score: ', neu)
+    return pos, neg, neu
 
 
 def process_tweet(name):
@@ -194,8 +202,8 @@ def calc_twitter(team, opp, is_live, debug):
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
     # Search query is what gets the tweets
-    search_query_team = '#'+team_tag+'v'+opp_tag+' OR #'+opp_tag+'v'+team_tag+' OR '+' OR '.join(team_key_a)
-    search_query_opp = '#'+team_tag+'v'+opp_tag+' OR #'+opp_tag+'v'+team_tag+' OR '+' OR '.join(opp_key_a)
+    search_query_team = '#'+team_tag+' OR '+' OR '.join(team_key_a)
+    search_query_opp = '#'+opp_tag+' OR '+' OR '.join(opp_key_a)
     # Generate tweet & do calculation
     # DEBUG CODE - writes tweets to file
     if debug is True:
@@ -203,12 +211,12 @@ def calc_twitter(team, opp, is_live, debug):
         generate_tweets(opp, max_tweets, search_query_opp, api)
         # team_pos, team_neg = process_tweet(team)
         # opp_pos, opp_neg = process_tweet(opp)
-    team_pos, team_neg = process_tweets(team, max_tweets, search_query_team, api, debug)
-    opp_pos, opp_neg = process_tweets(opp, max_tweets, search_query_opp, api, debug)
+    team_pos, team_neg, team_neu = process_tweets(team, max_tweets, search_query_team, api, debug)
+    opp_pos, opp_neg, opp_neu = process_tweets(opp, max_tweets, search_query_opp, api, debug)
     # Base case
-    our_team = 500 + team_pos + team_neg
-    opp_team = 500 + opp_pos + opp_neg
-    draw = (our_team + opp_team) / 2
+    our_team = 500 + team_pos + team_neg + team_neu
+    opp_team = 500 + opp_pos + opp_neg + opp_neu
+    draw = (our_team + opp_team)/2
     # Strengthening the draw position by backing up tweets with live stats
     if is_live is True:
         today = time.strftime("%Y-%m-%d")
