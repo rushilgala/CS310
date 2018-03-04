@@ -14,15 +14,15 @@ def calc_form(state):
 def get_key_by_name(team_name):
     return {
         # Twitter
-        'Arsenal': ['#AFC', '#arsenalfc', '#coyg', '#Arsenal'],
+        'Arsenal': ['#AFC', '#arsenalfc', '#coyg', '#Arsenal', '#gunners'],
         'ManUtd': ['#manutd', '#mufc'],
         'Watford': ['#watfordfc'],
-        'Everton': ['#efc'],
+        'Everton': ['#efc', '#everton'],
         'Newcastle': ['#nufc'],
         'Stoke': ['#scfc'],
         'Leicester': ['#lcfc'],
         'Liverpool': ['#lfc', '#ynwa'],
-        'Southampton': '#saintsfc',
+        'Southampton': ['#saintsfc'],
         'Swansea': ['#swans', '#swanseacity'],
         'WestBrom': ['#wba', '#westbrom'],
         'Bournemouth': ['#afcb'],
@@ -30,7 +30,7 @@ def get_key_by_name(team_name):
         'Huddersfield': ['#huddersfieldfc', '#htafc'],
         'Chelsea': ['#chelsea', '#chelseafc', '#cfc'],
         'Burnley': ['#burnleyfc', '#clarets'],
-        'Brighton': ['#bhafc', '#albion'],
+        'Brighton': ['#bhafc', '#albion', '#bha'],
         'ManCity': ['#MCFC', '#Mancity'],
         'Tottenham': ['#THFC', '#Spurs', '#coys'],
         'WestHam': ['#Westham', '#hammers', '#whufc']
