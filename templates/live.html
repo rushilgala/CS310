@@ -17,7 +17,6 @@
 
             switch (team) {
                 case 'Arsenal':
-                    console.log('Wrong one');
                     return 'Arsenal';
                 case 'Man Utd':
                     return 'ManUtd';
@@ -29,35 +28,23 @@
                     return 'Newcastle';
                 case 'Stoke':
                     return 'Stoke';
-                case 'Arsenal':
-                    return 'Arsenal';
-                case 'Leicester City':
-                    return 'Leicester';
                 case 'Leicester':
                     return 'Leicester';
-                case 'Watford':
-                    return 'Watford';
                 case 'Liverpool':
                     return 'Liverpool';
                 case 'Southampton':
                     return 'Southampton';
-                case 'Swansea City':
+                case 'Swansea':
                     return 'Swansea';
-                case 'West Bromwich Albion':
-                    return 'WestBrom';
                 case 'West Brom':
                     return 'WestBrom';
-                case 'AFC Bournemouth':
-                    return 'Bournemouth';
                 case 'Bournemouth':
                     return 'Bournemouth';
-                case 'Everton':
-                    return 'Everton';
                 case 'Stoke City':
                     return 'Stoke';
                 case 'Crystal Palace':
                     return 'CrystalPalace';
-                case 'Huddersfield Town':
+                case 'Huddersfield':
                     return 'Huddersfield';
                 case 'Chelsea':
                     return 'Chelsea';
@@ -65,20 +52,18 @@
                     return 'Burnley';
                 case 'Brighton':
                     return 'Brighton';
-                case 'Brighton & Hove Albion':
-                    return 'Brighton';
                 case 'Manchester City':
                     return 'ManCity';
                 case 'Newcastle United':
                     return 'Newcastle';
-                case 'Tottenham Hotspur':
+                case 'Tottenham':
                     return 'Tottenham';
                 case 'Manchester United':
                     return 'ManUtd';
-                case 'West Ham United':
+                case 'West Ham':
                     return 'WestHam';
                 default:
-                    return 'Arsenal';
+                    return team;
             }
         }
         function isInArray(value, array) { return array.indexOf(value) > -1; }
@@ -158,13 +143,13 @@
                         away.appendChild(document.createTextNode(fixtures[i].visitorteam_name));
                         link.appendChild(document.createTextNode(awayscore));
                         var createLink = document.createElement("a");
-                        if (isInArray(fixtures[i].localteam_id, myTeams)) {
+                        /*if (isInArray(fixtures[i].localteam_id, myTeams)) {
                             createLink.href = "./live/" + parseTeamName(fixtures[i].localteam_name) + "/" + parseTeamName(fixtures[i].visitorteam_name);
                         } else {
 
                             createLink.href = "./live/" + parseTeamName(fixtures[i].visitorteam_name) + "/" + parseTeamName(fixtures[i].localteam_name);
-                        }
-
+                        }*/
+                        createLink.href = "./live/" + parseTeamName(fixtures[i].localteam_name) + "/" + parseTeamName(fixtures[i].visitorteam_name);
                         createLink.text = "GO";
                         go.appendChild(createLink);
 

@@ -51,7 +51,8 @@ def calc_future(date, team, opp):
 
 def get_live_matches():
     today = time.strftime("%Y-%m-%d")
-    request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=9002%2C9158%2C9423%2C9287%2C9378%2C9260&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
+    teams = '&team_id=9002%2C9158%2C9423%2C9287%2C9378%2C9260'
+    request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
     try:
         url = urllib.request.Request(request_url)
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
@@ -72,7 +73,6 @@ def get_live_matches():
 
 def get_live_match(team):
     today = time.strftime("%Y-%m-%d")
-    test_date = '2018-02-25'
     team_a, team_b, team_c = util.get_id_by_name(team)
     request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(team_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
     try:
@@ -108,7 +108,7 @@ def get_live_match(team):
                 timer = 'FT'
             else:
                 timer = '0'
-        if data['localteam_id'] == team_b:
+        if data['localteam_id'] == str(team_b):
             team = data['localteam_score']
             opponent = data['visitorteam_score']
         else:

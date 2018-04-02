@@ -152,7 +152,7 @@
                             createLink.href = "./" + linkDate + "/" + t + "/" + parseTeamName(json.fixtures[i].awayTeamName);
 
                         } else {
-                            createLink.href = "./" + linkDate + "/" + t + "/" +parseTeamName(json.fixtures[i].homeTeamName);
+                            createLink.href = "./" + linkDate + "/" + parseTeamName(json.fixtures[i].homeTeamName) + "/" + t;
                         }
                         createLink.text = "GO";
                         go.appendChild(createLink);

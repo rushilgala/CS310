@@ -14,7 +14,7 @@ def calc_historic(date, team, opp, is_live):
     opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
     is_team_home = False  # Set our watched team to false initially, we will do some digging to see
     date = datetime.strptime(date, '%Y-%m-%d')
-    # Give each side a base score of 50
+    # Give each side a base score
     our_team = 33
     opp_team = 33
     draw = 33
@@ -44,20 +44,20 @@ def calc_historic(date, team, opp, is_live):
             else:
                 continue
     if 'statistics' in team_data:
-        # Add 10*(homeWon/AllHomeGames) to home team and 10*(awayWon/allAwayGames) to away team
+        # Add 40*(homeWon/AllHomeGames) to home team and 10*(awayWon/allAwayGames) to away team
         # Conditional Probability
         print('2. Getting stats...')
         if is_team_home is True:
             # Team is home, opp is away
-            our_team += 10 * int(int(team_data["statistics"][0]["wins_home"]) /
+            our_team += 40 * int(int(team_data["statistics"][0]["wins_home"]) /
                                  (int(team_data["statistics"][0]["wins_home"]) +
                                   int(team_data["statistics"][0]["draws_home"]) +
                                   int(team_data["statistics"][0]["losses_home"])))
-            opp_team += 10 * int(int(opp_data["statistics"][0]["wins_away"]) /
+            opp_team += 40 * int(int(opp_data["statistics"][0]["wins_away"]) /
                                  (int(opp_data["statistics"][0]["wins_away"]) +
                                   int(opp_data["statistics"][0]["draws_away"]) +
                                   int(opp_data["statistics"][0]["losses_away"])))
-            draw += 2 * int((int(team_data["statistics"][0]["draws_home"]) + int(opp_data["statistics"][0]["draws_away"])) /
+            draw += 10 * int((int(team_data["statistics"][0]["draws_home"]) + int(opp_data["statistics"][0]["draws_away"])) /
                             (int(team_data["statistics"][0]["wins_home"]) +
                             int(team_data["statistics"][0]["draws_home"]) +
                             int(team_data["statistics"][0]["losses_home"])) +
@@ -66,15 +66,15 @@ def calc_historic(date, team, opp, is_live):
                             int(opp_data["statistics"][0]["losses_away"]))
         else:
             # opp is home, team is away
-            our_team += 10 * int(int(team_data["statistics"][0]["wins_away"]) /
+            our_team += 40 * int(int(team_data["statistics"][0]["wins_away"]) /
                                  (int(team_data["statistics"][0]["wins_away"]) +
                                   int(team_data["statistics"][0]["draws_away"]) +
                                   int(team_data["statistics"][0]["losses_away"])))
-            opp_team += 10 * int(int(opp_data["statistics"][0]["wins_home"]) /
+            opp_team += 40 * int(int(opp_data["statistics"][0]["wins_home"]) /
                                  (int(opp_data["statistics"][0]["wins_home"]) +
                                   int(opp_data["statistics"][0]["draws_home"]) +
                                   int(opp_data["statistics"][0]["losses_home"])))
-            draw += 2 * int((int(team_data["statistics"][0]["draws_away"]) + int(opp_data["statistics"][0]["draws_home"])) /
+            draw += 10 * int((int(team_data["statistics"][0]["draws_away"]) + int(opp_data["statistics"][0]["draws_home"])) /
                             (int(team_data["statistics"][0]["wins_home"]) +
                             int(team_data["statistics"][0]["draws_home"]) +
                             int(team_data["statistics"][0]["losses_home"])) +
@@ -83,8 +83,8 @@ def calc_historic(date, team, opp, is_live):
                             int(opp_data["statistics"][0]["losses_away"]))
 
         # Use their current position - higher gets more points - 2*(21 - position in league)
-        our_team += 2*(21 - int(team_data["statistics"][0]["rank"]))
-        opp_team += 2*(21 - int(opp_data["statistics"][0]["rank"]))
+        our_team += 20*(21 - int(team_data["statistics"][0]["rank"]))
+        opp_team += 20*(21 - int(opp_data["statistics"][0]["rank"]))
 
         # Live historic data - checking to see if they're likely to score
         if is_live is True:
@@ -137,9 +137,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.5 * diff
                             opp_team *= 1.2 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 1.2 * diff
                             opp_team *= 0.5 * diff
+                            draw *= diff
                         our_team *= ((int(team_data["statistics"][0]["scoring_minutes_0_15_cnt"])/goals_team_total)+1)
                         opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_0_15_cnt"]) / goals_opp_total) + 1)
                     if 15 <= int(status) <= 30:
@@ -148,9 +150,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.8 * diff
                             opp_team *= 1.3 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 1.3 * diff
                             opp_team *= 0.8 * diff
+                            draw *= diff
                         our_team *= ((int(team_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_team_total) + 1)
                         opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_15_30_cnt"]) / goals_opp_total) + 1)
                     if 30 <= int(status) <= 45:
@@ -159,9 +163,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.8 * diff
                             opp_team *= 1.4 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 1.4 * diff
                             opp_team *= 0.8 * diff
+                            draw *= diff
                         our_team *= ((int(team_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_team_total) + 1)
                         opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_30_45_cnt"]) / goals_opp_total) + 1)
                     if 45 <= int(status) <= 60:
@@ -170,9 +176,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.7 * diff
                             opp_team *= 1.6 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 1.6 * diff
                             opp_team *= 0.7 * diff
+                            draw *= diff
                         our_team *= ((int(team_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_team_total) + 1)
                         opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_45_60_cnt"]) / goals_opp_total) + 1)
                     if 60 <= int(status) <= 75:
@@ -181,9 +189,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.6 * diff
                             opp_team *= 1.8 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 1.8 * diff
                             opp_team *= 0.6 * diff
+                            draw *= diff
                         our_team *= ((int(team_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_team_total) + 1)
                         opp_team *= ((int(opp_data["statistics"][0]["scoring_minutes_60_75_cnt"]) / goals_opp_total) + 1)
                     if 75 <= int(status) <= 87:
@@ -192,9 +202,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.5 * diff
                             opp_team *= 2 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 2 * diff
                             opp_team *= 0.5 * diff
+                            draw *= diff
                         our_team *= ((int(
                             team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
                         opp_team *= (
@@ -205,9 +217,11 @@ def calc_historic(date, team, opp, is_live):
                         if team < opponent:
                             our_team *= 0.5 * diff
                             opp_team *= 5 * diff
+                            draw *= diff
                         if opponent < team:
                             our_team *= 5 * diff
                             opp_team *= 0.5 * diff
+                            draw *= diff
                         our_team *= ((int(
                             team_data["statistics"][0]["scoring_minutes_75_90_cnt"]) / goals_team_total) + 1)
                         opp_team *= (
@@ -217,6 +231,7 @@ def calc_historic(date, team, opp, is_live):
     day_from = (date - DAY).strftime('%Y-%m-%dT%H:%M:%S')
     day_to = (date + DAY).strftime('%Y-%m-%dT%H:%M:%S')
     request_url = 'https://api.crowdscores.com/v1/matches?team_id=' + str(team_id_c) + '&from=' + day_from + '&to=' + day_to + '&api_key=' + str(config.CROWD_SCORE_KEY)
+    print(request_url)
     try:
         url = urllib.request.Request(request_url)
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
