@@ -231,7 +231,7 @@ def calc_historic(date, team, opp, is_live):
     day_from = (date - DAY).strftime('%Y-%m-%dT%H:%M:%S')
     day_to = (date + DAY).strftime('%Y-%m-%dT%H:%M:%S')
     request_url = 'https://api.crowdscores.com/v1/matches?team_id=' + str(team_id_c) + '&from=' + day_from + '&to=' + day_to + '&api_key=' + str(config.CROWD_SCORE_KEY)
-    if debug is True:
+    if config.DEBUG is True:
         print(request_url)
     try:
         url = urllib.request.Request(request_url)
