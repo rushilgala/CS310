@@ -51,45 +51,46 @@ def calc_future(date, team, opp):
 
 def get_live_matches():
     today = time.strftime("%Y-%m-%d")
-    teams = '&team_id=9002%2C9158%2C9423%2C9287%2C9378%2C9260'
+    # teams = '&team_id=9002%2C9158%2C9423%2C9287%2C9378%2C9260' - this statement uses specific teams
     request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
     try:
         url = urllib.request.Request(request_url)
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('Error getting multiple live matches');
+        print('Error getting multiple live matches')
+        if config.DEBUG is True:
+            print(request_url)
+            print(e.strerror)
         data = ''
     except UnicodeEncodeError as e:
         data = ''
     except http.client.BadStatusLine as e:
         data = ''
     except http.client.IncompleteRead as e:
-        data = ''
-    except urllib.error.HTTPError as e:
         data = ''
     return data
 
 
 def get_live_match(team):
     today = time.strftime("%Y-%m-%d")
-    team_a, team_b, team_c = util.get_id_by_name(team)
+    _, team_b, _ = util.get_id_by_name(team)
+    
     request_url = 'http://api.football-api.com/2.0/matches?comp_id=1204&team_id=' + str(team_b) + '&match_date=' + today + '&Authorization=' + config.FOOTBALL_API_KEY
     try:
         url = urllib.request.Request(request_url)
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print('Single live match error');
+        print('Single live match error')
         print(request_url)
+        print(e.strerror)
         data = ''
     except UnicodeEncodeError as e:
         data = ''
     except http.client.BadStatusLine as e:
         data = ''
     except http.client.IncompleteRead as e:
-        data = ''
-    except urllib.error.HTTPError as e:
         data = ''
     team, opponent, status, timer = '0', '0', '0', '0'
     if data is not '':
