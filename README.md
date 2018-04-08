@@ -5,12 +5,13 @@ This project contains the source code and documentation for my third year disser
 ## Set up
 
 1. This set up assumes you have downloaded this package and are in the current directory reading this README.md
-2. First step is to install virtualenvwrapper.
-3. Then enter ```mkvirtualenv <project_name>``` command replacing <project_name> with a name.
-4. Activate this new environment by using the ```source ./<project_name>/bin/activate``` command.
-5. Install the required packages using the provided pip: ```./<project_name>/bin/pip -r requirements.txt```.
-6. Use the provided python binary to start the server: ```./<project_name>/bin/python run.py```.
-7. Navigate to 127.0.0.1:5000 and begin using the project
+2. First step is to install virtualenvwrapper using ```pip install virtualenvwrapper```.
+3. Then enter ```mkvirtualenv <project_name>``` command replacing <project_name> with a name. 
+4. The command might need to be sourced. So we need to export some variables:  (```source /usr/local/bin/virtualenvwrapper.sh```).
+5. Activate this new environment by using the ```source ./<project_name>/bin/activate``` command.
+6. Install the required packages using the provided pip: ```./<project_name>/bin/pip install -r requirements.txt```.
+7. Use the provided python binary to start the server: ```./<project_name>/bin/python run.py```.
+8. Navigate to 127.0.0.1:5000 and begin using the project
 
 ## Configuration
 
