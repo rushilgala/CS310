@@ -108,7 +108,6 @@ def process_tweets(name, n, query, api, debug):
         for t2, t2_count in t1_max_terms:
             com_max.append(((t1, t2), t2_count))
     # Get the most frequent co-occurrences
-    terms_max = sorted(com_max, key=operator.itemgetter(1), reverse=True)
     for term, n in count_all.items():
         p_t[term] = n / count
         for t2 in com[term]:
@@ -122,7 +121,7 @@ def process_tweets(name, n, query, api, debug):
     for term, n in p_t.items():
         positive_assoc = sum(pmi[term][tx] for tx in positive_vocab)
         negative_assoc = sum(pmi[term][tx] for tx in negative_vocab)
-        neutral_assoc = sum(pmi[term][tx] for tx in negative_vocab)
+        
         semantic_orientation[term] = positive_assoc - negative_assoc
     semantic_sorted = sorted(semantic_orientation.items(),
                              key=operator.itemgetter(1),
@@ -164,7 +163,6 @@ def process_tweet(name):
             for t2, t2_count in t1_max_terms:
                 com_max.append(((t1, t2), t2_count))
         # Get the most frequent co-occurrences
-        terms_max = sorted(com_max, key=operator.itemgetter(1), reverse=True)
         for term, n in count_all.items():
             p_t[term] = n / count
             for t2 in com[term]:
@@ -195,10 +193,10 @@ def calc_twitter(team, opp, is_live, debug):
     opp_key_a = util.get_key_by_name(opp)
     team_tag = util.get_tag_by_name(team)
     opp_tag = util.get_tag_by_name(opp)
-    team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
-    opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
+    _, team_id_b, _ = util.get_id_by_name(team)
+    _, _, _ = util.get_id_by_name(opp)
     max_tweets = 750  # This value could be changed to increase / decrease depending on volume
-    api, auth = get_twitter_api_session()
+    api, _ = get_twitter_api_session()
     print('5. twitter calculations...')
     print(api.rate_limit_status()['resources']['search'])
     # Search query is what gets the tweets
@@ -227,15 +225,13 @@ def calc_twitter(team, opp, is_live, debug):
             data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
             data = json.loads(data)
         except urllib.error.URLError as e:
-            print('Single live match error');
+            print('Single live match error', e)
             data = ''
         except UnicodeEncodeError as e:
             data = ''
         except http.client.BadStatusLine as e:
             data = ''
         except http.client.IncompleteRead as e:
-            data = ''
-        except urllib.error.HTTPError as e:
             data = ''
         team, opponent, status = 0, 0, 0
         if data is not '':
