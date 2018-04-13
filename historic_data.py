@@ -11,7 +11,7 @@ def calc_historic(date, team, opp, is_live):
     # Obtain important identifiers
     guard = ''
     team_id_a, team_id_b, team_id_c = util.get_id_by_name(team)
-    opp_id_a, opp_id_b, opp_id_c = util.get_id_by_name(opp)
+    opp_id_a, opp_id_b, _ = util.get_id_by_name(opp)
     is_team_home = False  # Set our watched team to false initially, we will do some digging to see
     date = datetime.strptime(date, '%Y-%m-%d')
     # Give each side a base score
@@ -97,15 +97,13 @@ def calc_historic(date, team, opp, is_live):
                 data = json.loads(data)
                 guard = data[0]
             except urllib.error.URLError as e:
-                print('Single live match error');
+                print('Single live match error')
                 data = ''
             except UnicodeEncodeError as e:
                 data = ''
             except http.client.BadStatusLine as e:
                 data = ''
             except http.client.IncompleteRead as e:
-                data = ''
-            except urllib.error.HTTPError as e:
                 data = ''
             team, opponent, status = 0, 0, 0
             if data is not '':
@@ -246,8 +244,6 @@ def calc_historic(date, team, opp, is_live):
         data = ''
     except http.client.IncompleteRead as e:
         data = ''
-    except urllib.error.HTTPError as e:
-        data = ''
     if data is not '':
         print('3. Getting match id...')
         match_id = data[0]['dbid']
@@ -264,8 +260,6 @@ def calc_historic(date, team, opp, is_live):
     except http.client.BadStatusLine as e:
         data = ''
     except http.client.IncompleteRead as e:
-        data = ''
-    except urllib.error.HTTPError as e:
         data = ''
     # Last 5 form
     # 2 variables - (a) how recent (b) W/D/L
