@@ -236,7 +236,7 @@ def calc_historic(date, team, opp, is_live):
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print(e + ': Match ID error')
+        print(e, ': Match ID error')
         data = ''
     except UnicodeEncodeError as e:
         data = ''
@@ -253,7 +253,7 @@ def calc_historic(date, team, opp, is_live):
         data = urllib.request.urlopen(url).read().decode('utf-8', 'ignore')
         data = json.loads(data)
     except urllib.error.URLError as e:
-        print(e + ': Form and h2h error')
+        print(e, ': Form and h2h error')
         data = ''
     except UnicodeEncodeError as e:
         data = ''
